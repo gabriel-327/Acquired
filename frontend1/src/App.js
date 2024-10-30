@@ -4,6 +4,9 @@ import Navbar from "./components/Navbar";
 import CreateListingModal from "./components/CreateListingModal";
 import ListingCard from "./components/ListingCard";
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Signup from './Signup';
+import Login from './Login';
 
 function App() {
   const [listings, setListings] = useState([]);
@@ -44,26 +47,34 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <Navbar onOpenModal={() => setShowModal(true)} />
-        
-        <div className="listing-grid">
-          {listings.map((listing, index) => (
-            <ListingCard key={index} listing={listing} />
-          ))}
-        </div>
+    <Router> {/* Wrap the entire App in Router */}
+      <div className="App">
+        <header className="App-header">
+          <Navbar onOpenModal={() => setShowModal(true)} />
+          
+          <div className="listing-grid">
+            {listings.map((listing, index) => (
+              <ListingCard key={index} listing={listing} />
+            ))}
+          </div>
 
-        {showModal && (
-          <CreateListingModal
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
-            onClose={() => setShowModal(false)}
-          />
-        )}
-      </header>
-    </div>
+          {showModal && (
+            <CreateListingModal
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleSubmit={handleSubmit}
+              onClose={() => setShowModal(false)}
+            />
+          )}
+        </header>
+
+        {/* Define routes here, accessible from Navbar's Link */}
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
