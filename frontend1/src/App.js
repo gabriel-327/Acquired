@@ -1,106 +1,126 @@
-import logo from './logo.svg';
-import './App.css';
-import axios from 'axios';
-import { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import "./App.css";
 
 function App() {
-  const [isOpen, setIsOpen] = useState(false); // Controls modal visibility
-  const [message, setMessage] = useState('');
+  const [listings, setListings] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    image: ''
+    name: "",
+    price: "",
+    image: "" // Change from imageUrl to image to match backend
   });
 
-  // Open and close modal
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  useEffect(() => {
+    // Fetch existing listings from the backend on page load
+    const fetchListings = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/products");
+        setListings(Array.isArray(response.data.data) ? response.data.data : []);
+      } catch (error) {
+        console.error("Failed to fetch listings:", error);
+        setListings([]);
+      }
+    };
 
-  // Handle form input changes
-  const handleChange = (e) => {
+    fetchListings();
+  }, []);
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Function to handle form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    // Send a POST request to the backend API with form data
-    const response = await axios.post('http://localhost:5000/api/products', {
-      name: formData.name,
-      price: formData.price,
-      image: formData.image
-    });
-    setMessage("Product created successfully!");
-    setFormData({ name: '', price: '', image: '' }); // Clear form fields after submission
-    closeModal(); // Close modal
-  } catch (error) {
-    setMessage("Failed to create product.");
-    console.error("There was an error creating the product:", error);
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      // Log formData to ensure it's correctly formatted before sending
+      console.log("Form data being sent:", formData);
+  
+      // Send the formData to the backend
+      const response = await axios.post("http://localhost:5000/api/products", formData);
+  
+      // Log response for debugging
+      console.log("Response from backend:", response);
+  
+      // Check if the response was successful
+      if (response.status === 201 && response.data.success) {
+        // Add the new listing to the listings state to display it on the frontend
+        setListings([...listings, response.data.data]);
+  
+        // Close the modal and reset the form fields
+        setShowModal(false);
+        setFormData({ name: "", price: "", image: "" });
+      } else {
+        console.error("Failed to create listing:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error while creating listing:", error);
+    }
+  };
+  
 
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Edit <code>src/App.js</code> and save to reload.</p>
-        
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
+        <div className="navbar">
+          <button onClick={() => setShowModal(true)}>Create Listing</button>
+          <button>Message Inbox</button>
+          <button>Your Listing</button>
+          <FontAwesomeIcon icon={faUser} className="login-icon" />
+        </div>
 
-        {/* Open Modal Button */}
-        <button onClick={openModal}>Create a post here</button>
-
-        {/* Status Message */}
-        {message && <p>{message}</p>}
-
-        {/* Modal for User Input */}
-        {isOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Create New Product</h2>
-              <form onSubmit={handleSubmit}>
-                <label>
-                  Name:
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Price:
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Image URL:
-                  <input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-                <button type="submit">Submit</button>
-                <button type="button" onClick={closeModal}>Cancel</button>
-              </form>
+        <div className="listing-grid">
+          {listings && listings.map((listing, index) => (
+            <div key={index} className="listing-card">
+              <img src={listing.image} alt="Listing" />
+              <p>{listing.name}</p>
+              <p>${listing.price}</p>
             </div>
+          ))}
+        </div>
+
+        {/* Modal for Create Listing */}
+        {showModal && (
+          <div className="modal">
+            <form onSubmit={handleSubmit}>
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Price:
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Image URL:
+                <input
+                  type="text"
+                  name="image" 
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <button type="submit">Create</button>
+              <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
+            </form>
           </div>
         )}
       </header>

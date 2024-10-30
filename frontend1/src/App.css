@@ -1,3 +1,40 @@
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f26b6b;
+  padding: 10px;
+}
+
+.navbar button, .login-icon {
+  color: #fff;
+  font-size: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Listing grid styling */
+.listing-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.listing-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  width: 150px;
+}
+
+.listing-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Modal styling */
 .modal {
   position: fixed;
   top: 0;
@@ -10,35 +47,27 @@
   justify-content: center;
 }
 
-.modal-content {
-  background: white;
+.modal form {
+  background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 300px;
-  max-width: 80%;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.modal-content h2 {
-  margin-top: 0;
+.modal label {
+  font-size: 14px;
 }
 
-.modal-content form label {
-  display: block;
-  margin: 10px 0;
-}
-
-.modal-content input {
-  width: 100%;
+.modal input {
   padding: 8px;
-  margin-top: 5px;
   border-radius: 4px;
   border: 1px solid #ddd;
 }
 
-.modal-content button {
-  margin: 10px 5px;
-  padding: 8px 16px;
+.modal button {
+  padding: 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
