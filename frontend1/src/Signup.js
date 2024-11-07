@@ -1,8 +1,9 @@
-// Signup.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import './Signup.css';
 
-function Signup() {
+function Signup({ onRegister }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -10,6 +11,7 @@ function Signup() {
     password: ''
   });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,12 +20,12 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data:", formData); // Log form data before submission
     try {
       const response = await axios.post("http://localhost:5000/api/users/register", formData);
-      console.log("Response data:", response.data); // Log response data for debugging
       if (response.data.success) {
         setMessage("User registered successfully!");
+        onRegister(); 
+        navigate("/"); 
       } else {
         setMessage(response.data.msg || "User already exists");
       }
@@ -32,12 +34,12 @@ function Signup() {
       setMessage("An error occurred during registration.");
     }
   };
-  
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="signup-container">
+      <form className="signup-form" onSubmit={handleSubmit}>
+        <h1>ACQUIRED</h1>
+        <h2>Sign Up</h2>
         <label>First Name:</label>
         <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
 
@@ -51,8 +53,12 @@ function Signup() {
         <input type="password" name="password" value={formData.password} onChange={handleChange} required />
 
         <button type="submit">Register</button>
+        
+        {/* Link to Login Page */}
+        <p>Already have an account? <Link to="/login">Log In</Link></p>
+
+        {message && <p>{message}</p>}
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 }

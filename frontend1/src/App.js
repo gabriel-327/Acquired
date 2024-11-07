@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import CreateListingModal from "./components/CreateListingModal";
 import ListingCard from "./components/ListingCard";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Signup from './Signup';
 import Login from './Login';
 
@@ -16,6 +16,7 @@ function App() {
     price: "",
     image: ""
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -26,8 +27,8 @@ function App() {
         console.error("Failed to fetch listings:", error);
       }
     };
-    fetchListings();
-  }, []);
+    if (isAuthenticated) fetchListings(); 
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -46,33 +47,42 @@ function App() {
     }
   };
 
+  const handleLogin = () => setIsAuthenticated(true);
+
   return (
-    <Router> {/* Wrap the entire App in Router */}
+    <Router>
       <div className="App">
-        <header className="App-header">
-          <Navbar onOpenModal={() => setShowModal(true)} />
-          
-          <div className="listing-grid">
-            {listings.map((listing, index) => (
-              <ListingCard key={index} listing={listing} />
-            ))}
+        {!isAuthenticated ? (
+          <Routes>
+            <Route path="/signup" element={<Signup onRegister={handleLogin} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="*" element={<Navigate to="/signup" />} />
+          </Routes>
+        ) : (
+          <div>
+            <header className="App-header">
+              <Navbar onOpenModal={() => setShowModal(true)} />
+              
+              <div className="listing-grid">
+                {listings.map((listing, index) => (
+                  <ListingCard key={index} listing={listing} />
+                ))}
+              </div>
+
+              {showModal && (
+                <CreateListingModal
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  handleSubmit={handleSubmit}
+                  onClose={() => setShowModal(false)}
+                />
+              )}
+            </header>
+            <Routes>
+              <Route path="*" element={<Navigate to="/" />} /> 
+            </Routes>
           </div>
-
-          {showModal && (
-            <CreateListingModal
-              formData={formData}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              onClose={() => setShowModal(false)}
-            />
-          )}
-        </header>
-
-        {/* Define routes here, accessible from Navbar's Link */}
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+        )}
       </div>
     </Router>
   );

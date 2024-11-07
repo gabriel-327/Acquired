@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const User = mongoose.model("User", userSchema);
 
 userSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next(); // Only hash if password is modified
@@ -34,4 +33,6 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.isPasswordMatch = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
 }
+const User = mongoose.model("User", userSchema);
+
 export default User; 
