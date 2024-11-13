@@ -20,8 +20,13 @@ function Signup({ onRegister }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.email.endsWith("@ufl.edu")) { //checks to ensure email is ufl.edu
+      setMessage("Invalid Email, UFL email required"); 
+      return; 
+    }
     try {
-      const response = await axios.post("http://localhost:5000/api/users/register", formData);
+      const response = await axios.post("http://localhost:5001/api/users/register", formData);
       if (response.data.success) {
         setMessage("User registered successfully!");
         onRegister(); 
