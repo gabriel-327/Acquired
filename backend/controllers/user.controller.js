@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 
+// github comment
 export const createUser = async (req, res) => {
   const email = req.body.email;
 
