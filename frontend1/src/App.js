@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products");
+        const response = await axios.get("http://localhost:5001/api/products");
         setListings(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         console.error("Failed to fetch listings:", error);
@@ -38,7 +38,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/products", formData);
+      const response = await axios.post("http://localhost:5001/api/products", formData);
       setListings([...listings, response.data.data]);
       setShowModal(false);
       setFormData({ name: "", price: "", image: "" });

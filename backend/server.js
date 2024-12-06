@@ -13,6 +13,8 @@ dotenv.config();
 // Initialize express app
 const app = express();
 
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
 // Use CORS to connect frontend and backend
 app.use(cors());
 
@@ -25,11 +27,13 @@ app.use("/api/users", userRoutes);
 
 
 // Set port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Start server and connect to database
 app.listen(PORT, async () => {
     await connectDB(); // Connect to MongoDB
     console.log("Server started at http://localhost:" + PORT);
+
+    
 });
 
