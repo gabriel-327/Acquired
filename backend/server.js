@@ -5,6 +5,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js"; // Ensure connectDB connects to your database
 import productRoutes from "./routes/product.route.js";
 import userRoutes from "./routes/user.route.js";
+//import messageRoutes from "./routes/message.route.js";
 
 // github comment
 // Load environment variables
@@ -24,7 +25,7 @@ app.use(express.json());
 // Routes for products
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
-
+//app.use("/api/messages", messageRoutes);
 
 // Set port
 const PORT = process.env.PORT || 5001;
